@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config();
 
 import express from "express";
 import cors from "cors";
@@ -9,7 +8,7 @@ import { enviarEmailConfirmacion, enviarEmailCancelacion, enviarEmailNotificacio
 
 const prisma = new PrismaClient();
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -23,7 +22,6 @@ app.use((req, res, next) => {
 // AUTH
 // ==========================================
 
-// AUTH - Login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -65,7 +63,6 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-// AUTH - Verify token
 app.get("/api/auth/verify", async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -98,7 +95,6 @@ app.get("/api/auth/verify", async (req, res) => {
 // RESERVES
 // ==========================================
 
-// GET totes les reserves
 app.get("/api/reservas", async (req, res) => {
   try {
     const reservas = await prisma.reserva.findMany({
@@ -111,7 +107,6 @@ app.get("/api/reservas", async (req, res) => {
   }
 });
 
-// POST crear reserva (AMB BLOQUEIG AUTOMÀTIC + NOTIFICACIÓ EMAIL)
 app.post("/api/reservas", async (req, res) => {
   try {
     const { nombre, email, telefono, tipoSesionId, fechaHora, comentarios } = req.body;
@@ -120,7 +115,6 @@ app.post("/api/reservas", async (req, res) => {
       return res.status(400).json({ message: 'Camps obligatoris incomplets' });
     }
 
-    // Buscar tipus de sessió per NOM
     const tipoSesion = await prisma.tipoSesion.findUnique({
       where: { nombre: tipoSesionId }
     });
@@ -129,23 +123,19 @@ app.post("/api/reservas", async (req, res) => {
       return res.status(400).json({ message: `Tipus de sessió "${tipoSesionId}" no trobat` });
     }
 
-    // Parsejar la data de la reserva
     const fechaReserva = new Date(fechaHora);
     
-    // Extreure només la DATA (sense hora) en format ISO local
     const year = fechaReserva.getFullYear();
     const month = String(fechaReserva.getMonth() + 1).padStart(2, '0');
     const day = String(fechaReserva.getDate()).padStart(2, '0');
     const fechaSoloString = `${year}-${month}-${day}`;
     
-    // Extreure hora en format HH:MM
     const hours = String(fechaReserva.getHours()).padStart(2, '0');
     const minutes = String(fechaReserva.getMinutes()).padStart(2, '0');
     const horaInicio = `${hours}:${minutes}`;
 
     console.log(`🔍 Buscant disponibilitat per: fecha=${fechaSoloString}, hora=${horaInicio}`);
 
-    // Buscar franges disponibles per aquesta data i hora
     const todasFranjas = await prisma.disponibilidadHoraria.findMany({
       where: {
         fecha: {
@@ -156,11 +146,7 @@ app.post("/api/reservas", async (req, res) => {
     });
 
     console.log(`📊 Franges trobades per ${fechaSoloString}:`, todasFranjas.length);
-    todasFranjas.forEach(f => {
-      console.log(`  - ${f.horaInicio} - ${f.horaFin}: disponible=${f.disponible}, reservaId=${f.reservaId}`);
-    });
 
-    // Buscar la franja específica amb aquesta hora
     const franjaDisponible = todasFranjas.find(f => 
       f.horaInicio === horaInicio && 
       f.disponible === true && 
@@ -168,15 +154,11 @@ app.post("/api/reservas", async (req, res) => {
     );
 
     if (!franjaDisponible) {
-      console.log(`❌ No s'ha trobat franja disponible per ${horaInicio}`);
       return res.status(400).json({ 
         message: 'Aquesta hora ja no està disponible. Si us plau, refresca la pàgina i selecciona una altra hora.' 
       });
     }
 
-    console.log(`✅ Franja disponible trobada: ${franjaDisponible.id}`);
-
-    // Buscar o crear client
     let cliente = await prisma.cliente.findUnique({
       where: { email }
     });
@@ -187,7 +169,6 @@ app.post("/api/reservas", async (req, res) => {
       });
     }
 
-    // Crear reserva
     const reserva = await prisma.reserva.create({
       data: {
         clienteId: cliente.id,
@@ -202,7 +183,6 @@ app.post("/api/reservas", async (req, res) => {
       }
     });
 
-    // BLOQUEJAR AUTOMÀTICAMENT LA FRANJA HORÀRIA
     await prisma.disponibilidadHoraria.update({
       where: { id: franjaDisponible.id },
       data: {
@@ -213,7 +193,6 @@ app.post("/api/reservas", async (req, res) => {
 
     console.log(`✅ Reserva creada i franja ${horaInicio} bloquejada automàticament`);
 
-    // 📧 ENVIAR EMAIL DE NOTIFICACIÓ A L'ESTUDI (nova reserva pendent)
     try {
       await enviarEmailNotificacionEstudio(
         nombre,
@@ -224,7 +203,7 @@ app.post("/api/reservas", async (req, res) => {
         comentarios
       );
     } catch (emailError) {
-      console.error('⚠️ Error enviant notificació a l\'estudi (reserva creada igualment):', emailError);
+      console.error('⚠️ Error enviant notificació a l\'estudi:', emailError);
     }
 
     res.status(201).json({
@@ -237,7 +216,6 @@ app.post("/api/reservas", async (req, res) => {
   }
 });
 
-// PATCH actualitzar estat de reserva (AMB ENVIAMENT D'EMAIL)
 app.patch("/api/reservas/:id/estado", async (req, res) => {
   try {
     const { id } = req.params;
@@ -258,7 +236,6 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
       return res.status(404).json({ message: "Reserva no trobada" });
     }
 
-    // Si es cancel·la o elimina: SEMPRE alliberar la franja horària
     if (estado === 'cancelada' || estado === 'eliminada') {
       const franjasActualizadas = await prisma.disponibilidadHoraria.updateMany({
         where: { reservaId: id },
@@ -272,7 +249,6 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
         console.log(`🔓 ${franjasActualizadas.count} franja(es) alliberada(es) per reserva ${id}`);
       }
 
-      // 📧 ENVIAR EMAIL DE CANCEL·LACIÓ AL CLIENT
       if (estado === 'cancelada' && reserva.cliente && reserva.tipoSesion) {
         try {
           await enviarEmailCancelacion(
@@ -287,7 +263,6 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
       }
     }
 
-    // Si es confirma: bloquejar franja horària + ENVIAR EMAIL
     if (estado === 'confirmada' && reserva.estado !== 'confirmada') {
       const fechaReserva = new Date(reserva.fechaHora);
       const year = fechaReserva.getFullYear();
@@ -326,7 +301,6 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
             reservaId: id
           }
         });
-        console.log(`🔒 Nova franja creada i bloquejada per reserva ${id}`);
       } else {
         await prisma.disponibilidadHoraria.update({
           where: { id: disponibilidad.id },
@@ -335,10 +309,8 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
             reservaId: id
           }
         });
-        console.log(`🔒 Franja ${horaInicio} bloquejada per reserva ${id}`);
       }
 
-      // 📧 ENVIAR EMAIL DE CONFIRMACIÓ AL CLIENT
       if (reserva.cliente && reserva.tipoSesion) {
         try {
           await enviarEmailConfirmacion(
@@ -351,12 +323,10 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
           console.log(`📧 Email de confirmació enviat a ${reserva.cliente.email}`);
         } catch (emailError) {
           console.error('⚠️ Error enviant email de confirmació:', emailError);
-          // No fallem la petició si l'email falla
         }
       }
     }
 
-    // Actualitzar reserva
     const updatedReserva = await prisma.reserva.update({
       where: { id },
       data: { estado },
@@ -374,7 +344,6 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
 // DISPONIBILITAT HORÀRIA
 // ==========================================
 
-// GET disponibilitat per data
 app.get("/api/disponibilidad/:fecha", async (req, res) => {
   try {
     const { fecha } = req.params;
@@ -399,7 +368,6 @@ app.get("/api/disponibilidad/:fecha", async (req, res) => {
   }
 });
 
-// POST crear franjes horàries
 app.post("/api/disponibilidad", async (req, res) => {
   try {
     const { fecha, horarios } = req.body;
@@ -428,7 +396,6 @@ app.post("/api/disponibilidad", async (req, res) => {
   }
 });
 
-// DELETE eliminar franja horària
 app.delete("/api/disponibilidad/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -452,7 +419,6 @@ app.delete("/api/disponibilidad/:id", async (req, res) => {
   }
 });
 
-// PATCH toggle disponibilitat
 app.patch("/api/disponibilidad/:id/toggle", async (req, res) => {
   try {
     const { id } = req.params;
@@ -481,7 +447,6 @@ app.patch("/api/disponibilidad/:id/toggle", async (req, res) => {
 // ALTRES
 // ==========================================
 
-// GET tipus de sessió
 app.get("/api/tipos-sesion", async (req, res) => {
   try {
     const tipos = await prisma.tipoSesion.findMany({
@@ -494,13 +459,12 @@ app.get("/api/tipos-sesion", async (req, res) => {
   }
 });
 
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
 app.listen(PORT, () => {
-  console.log("🚀 SERVIDOR en http://localhost:5000");
+  console.log(`🚀 SERVIDOR en port ${PORT}`);
   console.log("✅ Sistema de reserves amb bloqueig automàtic activat");
   console.log("📧 Sistema d'emails configurat");
 });
