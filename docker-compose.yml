@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: camereta-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: camereta2024
+      MYSQL_DATABASE: camereta_reservas
+      MYSQL_USER: camereta
+      MYSQL_PASSWORD: camereta2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  adminer:
+    image: adminer
+    container_name: camereta-adminer
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:

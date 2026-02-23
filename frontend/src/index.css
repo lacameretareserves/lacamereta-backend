@@ -1,0 +1,1714 @@
+/* ========================================
+   LA CAMERETA - SISTEMA DE RESERVAS
+   CSS RESPONSIVE COMPLETO
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+/* ========================================
+   RESET Y BASE
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  color: #2D2D2D;
+  background-color: #F5F5F0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   APP CONTAINER
+   ======================================== */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* ========================================
+   NAVBAR - RESPONSIVE
+   ======================================== */
+.navbar {
+  background-color: #6ECFBD;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Logo */
+.navbar-logo {
+  flex-shrink: 0;
+  z-index: 1001;
+}
+
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  height: 40px;
+  width: auto;
+}
+
+/* Links de navegación - Desktop */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.875rem;
+  border: 2px solid white;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background-color: white;
+  color: #6ECFBD;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.nav-button {
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+/* Botón hamburguesa - oculto en desktop */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Overlay para cerrar menú */
+.navbar-overlay {
+  display: none;
+}
+
+/* ========================================
+   NAVBAR - TABLET (768px)
+   ======================================== */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.625rem 1rem;
+  }
+
+  .navbar-logo img {
+    height: 36px;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+/* ========================================
+   NAVBAR - MÓVIL (600px)
+   ======================================== */
+@media (max-width: 600px) {
+  .navbar-toggle {
+    display: block;
+  }
+
+  .navbar-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 280px;
+    height: 100vh;
+    background-color: #6ECFBD;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 5rem 1.5rem 2rem;
+    gap: 0.75rem;
+    transition: right 0.3s ease;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  .navbar-links.open {
+    right: 0;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    padding: 0.875rem 1rem;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .navbar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+
+  .navbar-logo img {
+    height: 38px;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+}
+
+/* ========================================
+   BOOKING PAGE - PÁGINA DE RESERVAS
+   ======================================== */
+.booking-container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.booking-wrapper {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.booking-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem 1rem;
+}
+
+.booking-title {
+  font-size: 2.25rem;
+  color: #4A4A4A;
+  margin-bottom: 0.75rem;
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.booking-subtitle {
+  font-size: 1.1rem;
+  color: #666666;
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 400;
+}
+
+.booking-form-container {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+/* ========================================
+   FORMULARIOS - ESTILOS COMUNES
+   ======================================== */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background-color: white;
+  /* Evitar zoom en iOS */
+  font-size: 16px;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #6ECFBD;
+  box-shadow: 0 0 0 3px rgba(110, 207, 189, 0.15);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-error {
+  color: #EF4444;
+  font-size: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.form-info {
+  color: #666;
+  font-style: italic;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.form-warning {
+  color: #F44336;
+  font-weight: 600;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  background-color: #FEE2E2;
+  border-radius: 0.5rem;
+}
+
+/* ========================================
+   ALERTAS
+   ======================================== */
+.alert {
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.alert-success {
+  background-color: #D1FAE5;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+}
+
+.alert-error {
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+/* ========================================
+   BOTONES
+   ======================================== */
+.btn-submit {
+  width: 100%;
+  background-color: #6ECFBD;
+  color: white;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* Touch-friendly */
+  min-height: 48px;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #5FB4AA;
+  transform: translateY(-1px);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botón primario reutilizable */
+.btn-primary {
+  padding: 0.75rem 1.25rem;
+  background-color: #6ECFBD;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background-color: white;
+  color: #6ECFBD;
+  border-color: #6ECFBD;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: #F44336;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-height: 44px;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   PANEL DE ADMINISTRACIÓN
+   ======================================== */
+.admin-container {
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+  background-color: #F5F5F0;
+}
+
+.admin-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.admin-title {
+  font-size: 1.75rem;
+  color: #4A4A4A;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.admin-subtitle {
+  font-size: 1.1rem;
+  color: #666666;
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 400;
+}
+
+.admin-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+  color: #6B7280;
+}
+
+/* ========================================
+   FILTROS ADMIN
+   ======================================== */
+.admin-filters {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  min-width: 180px;
+  background-color: white;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #6ECFBD;
+  box-shadow: 0 0 0 3px rgba(110, 207, 189, 0.1);
+}
+
+/* Grupo de botones en filtros */
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   GRID DE RESERVAS
+   ======================================== */
+.reservas-container {
+  margin-top: 1.5rem;
+}
+
+.reservas-header {
+  padding: 1rem;
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reservas-header label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.no-reservas {
+  background: white;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  border-radius: 0.75rem;
+  color: #6B7280;
+  font-size: 1rem;
+}
+
+.reservas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ========================================
+   TARJETA DE RESERVA
+   ======================================== */
+.reserva-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.reserva-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reserva-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #F5F5F0;
+  gap: 0.5rem;
+}
+
+.reserva-cliente {
+  font-size: 1.1rem;
+  color: #2D2D2D;
+  margin: 0;
+  word-break: break-word;
+}
+
+.reserva-estado {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.reserva-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.detalle-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.detalle-label {
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.detalle-value {
+  font-size: 0.9rem;
+  color: #2D2D2D;
+  word-break: break-word;
+}
+
+.reserva-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #F5F5F0;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+.btn-ver {
+  background-color: #E5E7EB;
+  color: #374151;
+}
+
+.btn-ver:hover {
+  background-color: #D1D5DB;
+}
+
+.btn-editar {
+  background-color: #6ECFBD;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #5FB4AA;
+}
+
+/* ========================================
+   EDITOR DE ESTADO
+   ======================================== */
+.estado-editor {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #F5F5F0;
+  border-radius: 0.5rem;
+  border-top: 2px solid #6ECFBD;
+}
+
+.estado-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.estado-select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  background-color: white;
+}
+
+.estado-select:focus {
+  outline: none;
+  border-color: #6ECFBD;
+  box-shadow: 0 0 0 3px rgba(110, 207, 189, 0.1);
+}
+
+.estado-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-guardar {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.btn-guardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background-color: #F44336;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background-color: #da190b;
+}
+
+.btn-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   LOGIN PAGE
+   ======================================== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #F5F5F0 0%, #E5E5DC 100%);
+  padding: 1rem;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.login-header {
+  background: linear-gradient(135deg, #6ECFBD 0%, #5FB4AA 100%);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.login-form {
+  padding: 1.75rem;
+}
+
+.login-help {
+  padding: 1.25rem 1.75rem;
+  background-color: #F9FAFB;
+  border-top: 1px solid #E5E7EB;
+  text-align: center;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: #6B7280;
+  margin: 0.2rem 0;
+}
+
+.help-text strong {
+  color: #374151;
+}
+
+/* ========================================
+   CALENDARIO DISPONIBILIDAD
+   ======================================== */
+.calendario-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+
+.calendario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.calendario-title {
+  color: #6ECFBD;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.calendario-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.calendario-controls label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.calendario-controls input[type="date"] {
+  padding: 0.6rem;
+  border: 2px solid #D4C4B0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Formulario de franjas */
+.franjas-form {
+  background-color: #F5F5DC;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #D4C4B0;
+}
+
+.franjas-form h3 {
+  margin-bottom: 1rem;
+  color: #6ECFBD;
+  font-size: 1.1rem;
+}
+
+.franjas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.franjas-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.franjas-grid label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.franjas-grid input,
+.franjas-grid select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.franjas-info {
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.btn-crear-franjas {
+  padding: 0.75rem 1.5rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.btn-crear-franjas:hover {
+  background-color: #45a049;
+}
+
+/* Estado vacío */
+.calendario-empty {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background-color: #FFF8E1;
+  border-radius: 0.75rem;
+  border: 2px dashed #D4C4B0;
+}
+
+.calendario-empty p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.calendario-empty p:last-child {
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+/* Grid de franjas */
+.franjas-disponibles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.franja-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.franja-card.disponible {
+  background-color: #E8F5E9;
+  border-color: #4CAF50;
+}
+
+.franja-card.ocupada {
+  background-color: #FFEBEE;
+  border-color: #F44336;
+}
+
+.franja-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.franja-hora {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.franja-estado {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.franja-estado.lliure {
+  background-color: #4CAF50;
+}
+
+.franja-estado.ocupada {
+  background-color: #F44336;
+}
+
+.franja-reserva {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.franja-reserva p {
+  margin: 0.2rem 0;
+}
+
+.franja-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.franja-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 40px;
+}
+
+.btn-toggle {
+  color: white;
+}
+
+.btn-toggle.bloquear {
+  background-color: #FF9800;
+}
+
+.btn-toggle.desbloquear {
+  background-color: #4CAF50;
+}
+
+.btn-eliminar {
+  background-color: #F44336;
+  color: white;
+}
+
+/* ========================================
+   CHECKBOX CUSTOM
+   ======================================== */
+input[type="checkbox"] {
+  accent-color: #6ECFBD;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* ========================================
+   MEDIA QUERIES - RESPONSIVE
+   ======================================== */
+
+/* Tablet y móvil grande (768px y menos) */
+@media (max-width: 768px) {
+  /* Booking Page */
+  .booking-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .booking-title {
+    font-size: 1.75rem;
+  }
+
+  .booking-subtitle {
+    font-size: 1rem;
+  }
+
+  .booking-form-container {
+    padding: 1.5rem;
+  }
+
+  /* Admin Page */
+  .admin-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .admin-title {
+    font-size: 1.5rem;
+  }
+
+  .admin-subtitle {
+    font-size: 1rem;
+  }
+
+  .admin-filters {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .admin-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .admin-actions .btn-primary,
+  .admin-actions .btn-danger {
+    width: 100%;
+  }
+
+  /* Reservas grid */
+  .reservas-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Calendario */
+  .calendario-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendario-title {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .calendario-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .calendario-controls input[type="date"],
+  .calendario-controls button {
+    width: 100%;
+  }
+
+  .franjas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .franjas-disponibles {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Móvil (480px y menos) */
+@media (max-width: 480px) {
+  /* Booking Page */
+  .booking-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .booking-header {
+    margin-bottom: 1.5rem;
+    padding: 1rem 0.5rem;
+  }
+
+  .booking-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .booking-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .booking-form-container {
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  /* Admin Page */
+  .admin-header {
+    margin-bottom: 1rem;
+  }
+
+  .admin-title {
+    font-size: 1.35rem;
+    line-height: 1.3;
+  }
+
+  .admin-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .admin-filters {
+    padding: 0.875rem;
+    gap: 0.75rem;
+  }
+
+  .filter-label {
+    font-size: 0.9rem;
+  }
+
+  /* Tarjetas de reserva */
+  .reserva-card {
+    padding: 1rem;
+  }
+
+  .reserva-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .reserva-cliente {
+    font-size: 1rem;
+  }
+
+  .reserva-estado {
+    align-self: flex-start;
+  }
+
+  .estado-actions {
+    flex-direction: column;
+  }
+
+  /* Login */
+  .login-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+
+  .login-form {
+    padding: 1.25rem;
+  }
+
+  .login-help {
+    padding: 1rem 1.25rem;
+  }
+
+  /* Calendario */
+  .calendario-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .calendario-header {
+    margin-bottom: 1rem;
+  }
+
+  .calendario-title {
+    font-size: 1.15rem;
+  }
+
+  .franjas-form {
+    padding: 1rem;
+  }
+
+  .franjas-form h3 {
+    font-size: 1rem;
+  }
+
+  .franja-card {
+    padding: 0.875rem;
+  }
+
+  .franja-hora {
+    font-size: 1rem;
+  }
+
+  .franja-actions {
+    flex-direction: column;
+  }
+
+  .franja-actions button {
+    width: 100%;
+  }
+}
+
+/* Móvil muy pequeño (360px y menos) */
+@media (max-width: 360px) {
+  .booking-title {
+    font-size: 1.35rem;
+  }
+
+  .admin-title {
+    font-size: 1.2rem;
+  }
+
+  .btn-primary {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================
+   UTILIDADES
+   ======================================== */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+/* Safe area para móviles con notch */
+@supports (padding: max(0px)) {
+  .booking-container,
+  .admin-container,
+  .login-container,
+  .calendario-container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ========================================
+   CALENDARI DE RESERVES - FullCalendar
+   ======================================== */
+.calendario-reservas-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.calendario-reservas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.calendario-reservas-title {
+  font-size: 1.75rem;
+  color: #4A4A4A;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.calendario-reservas-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Llegenda d'estats */
+.calendario-llegenda {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.llegenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #4A4A4A;
+}
+
+.llegenda-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* Wrapper del calendari */
+.calendario-wrapper {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Estils FullCalendar */
+.fc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.fc .fc-toolbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  color: #4A4A4A;
+}
+
+.fc .fc-button-primary {
+  background-color: #6ECFBD;
+  border-color: #6ECFBD;
+  font-weight: 500;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #5FB4AA;
+  border-color: #5FB4AA;
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #6ECFBD;
+  border-color: #6ECFBD;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #4A9A8C;
+  border-color: #4A9A8C;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: #4A4A4A;
+  text-decoration: none;
+}
+
+.fc .fc-event {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+}
+
+.fc .fc-event:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.fc .fc-timegrid-slot {
+  height: 2.5rem;
+}
+
+.fc .fc-now-indicator-line {
+  border-color: #F44336;
+}
+
+/* ========================================
+   MODAL DE DETALLS DE RESERVA
+   ======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 1rem;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 2px solid #F5F5F0;
+  background: linear-gradient(135deg, #6ECFBD 0%, #5FB4AA 100%);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.modal-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modal-info-full {
+  grid-column: 1 / -1;
+}
+
+.modal-label {
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.modal-value {
+  font-size: 0.95rem;
+  color: #2D2D2D;
+  word-break: break-word;
+}
+
+.modal-estado {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 2px solid #F5F5F0;
+  background-color: #F9FAFB;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.modal-estado-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-estado {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s;
+  min-height: 40px;
+}
+
+.btn-estado:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-pendiente {
+  background-color: #FFA500;
+}
+
+.btn-pendiente:hover:not(:disabled) {
+  background-color: #E69500;
+}
+
+.btn-confirmada {
+  background-color: #4CAF50;
+}
+
+.btn-confirmada:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.btn-completada {
+  background-color: #2196F3;
+}
+
+.btn-completada:hover:not(:disabled) {
+  background-color: #1976D2;
+}
+
+.btn-cancelada {
+  background-color: #F44336;
+}
+
+.btn-cancelada:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+.btn-eliminar-reserva {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #DC2626;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-eliminar-reserva:hover {
+  background-color: #B91C1C;
+}
+
+/* ========================================
+   RESPONSIVE - CALENDARI
+   ======================================== */
+@media (max-width: 768px) {
+  .calendario-reservas-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendario-reservas-title {
+    font-size: 1.4rem;
+  }
+
+  .calendario-reservas-actions {
+    width: 100%;
+  }
+
+  .calendario-reservas-actions .btn-primary {
+    flex: 1;
+  }
+
+  .calendario-llegenda {
+    gap: 1rem;
+  }
+
+  .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.1rem;
+  }
+
+  .modal-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-estado-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendario-reservas-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .calendario-wrapper {
+    padding: 0.5rem;
+  }
+
+  .llegenda-item {
+    font-size: 0.8rem;
+  }
+
+  .fc .fc-button {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
