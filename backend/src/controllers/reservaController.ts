@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import {
-  enviarEmailConfirmacionCliente,
+  enviarEmailConfirmacion,
   enviarEmailNotificacionEstudio,
-  enviarEmailCambioEstado,
+  enviarEmailCancelacion,
   verificarConfiguracionEmail
 } from '../services/emailService';
 
@@ -23,14 +23,12 @@ export const createReserva = async (req: Request, res: Response) => {
   try {
     const { nombre, email, telefono, tipoSesionId, fechaHora, comentarios } = req.body;
 
-    // Validar campos requeridos
     if (!nombre || !email || !telefono || !tipoSesionId || !fechaHora) {
       return res.status(400).json({
         message: 'Todos los campos obligatorios deben ser completados'
       });
     }
 
-    // BUSCAR el tipo de sesión por NOMBRE (no por ID)
     const tipoSesion = await prisma.tipoSesion.findUnique({
       where: { nombre: tipoSesionId }
     });
@@ -41,7 +39,6 @@ export const createReserva = async (req: Request, res: Response) => {
       });
     }
 
-    // Buscar o crear cliente
     let cliente = await prisma.cliente.findUnique({
       where: { email }
     });
@@ -52,7 +49,6 @@ export const createReserva = async (req: Request, res: Response) => {
       });
     }
 
-    // Crear la reserva usando el ID real del tipo de sesión
     const reserva = await prisma.reserva.create({
       data: {
         clienteId: cliente.id,
@@ -67,18 +63,15 @@ export const createReserva = async (req: Request, res: Response) => {
       }
     });
 
-    // Enviar emails (solo si está configurado)
     if (emailConfigOk) {
       try {
-        // Email al cliente
-        await enviarEmailConfirmacionCliente(
+        await enviarEmailConfirmacion(
           email,
           nombre,
           tipoSesion.nombre,
           new Date(fechaHora)
         );
 
-        // Email al estudio
         await enviarEmailNotificacionEstudio(
           nombre,
           email,
@@ -88,10 +81,9 @@ export const createReserva = async (req: Request, res: Response) => {
           comentarios
         );
 
-        console.log('✅ Emails enviados correctamente');
+        console.log('✅ Emails enviats correctament');
       } catch (emailError) {
         console.error('❌ Error al enviar emails:', emailError);
-        // No fallar la reserva si el email falla
       }
     }
 
@@ -140,7 +132,6 @@ export const updateReservaEstado = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { estado } = req.body;
 
-    // Validar estado
     const estadosValidos = ['pendiente', 'confirmada', 'cancelada', 'completada', 'eliminada'];
     if (!estadosValidos.includes(estado)) {
       return res.status(400).json({
@@ -157,20 +148,26 @@ export const updateReservaEstado = async (req: Request, res: Response) => {
       }
     });
 
-    // Enviar email al cliente informando del cambio (solo si está configurado y no es "pendiente")
     if (emailConfigOk && estado !== 'pendiente' && reserva.cliente && reserva.tipoSesion) {
       try {
-        await enviarEmailCambioEstado(
-          reserva.cliente.email,
-          reserva.cliente.nombre,
-          estado,
-          reserva.tipoSesion.nombre,
-          reserva.fechaHora
-        );
-        console.log('✅ Email de cambio de estado enviado');
+        if (estado === 'confirmada') {
+          await enviarEmailConfirmacion(
+            reserva.cliente.email,
+            reserva.cliente.nombre,
+            reserva.tipoSesion.nombre,
+            reserva.fechaHora
+          );
+        } else if (estado === 'cancelada') {
+          await enviarEmailCancelacion(
+            reserva.cliente.email,
+            reserva.cliente.nombre,
+            reserva.tipoSesion.nombre,
+            reserva.fechaHora
+          );
+        }
+        console.log('✅ Email de canvi d\'estat enviat');
       } catch (emailError) {
-        console.error('❌ Error al enviar email de cambio de estado:', emailError);
-        // No fallar la actualización si el email falla
+        console.error('❌ Error al enviar email de canvi d\'estat:', emailError);
       }
     }
 
@@ -200,7 +197,6 @@ export const deleteReservas = async (req: Request, res: Response) => {
       });
     }
 
-    // Eliminar les reserves
     const result = await prisma.reserva.deleteMany({
       where: {
         id: {

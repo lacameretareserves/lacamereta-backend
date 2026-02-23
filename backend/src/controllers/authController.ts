@@ -32,7 +32,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
     }
 
     // Verificar contraseña
-    const passwordValid = await bcrypt.compare(password, admin.password);
+    const passwordValid = await bcrypt.compare(password, admin.passwordHash);
 
     if (!passwordValid) {
       return res.status(401).json({
