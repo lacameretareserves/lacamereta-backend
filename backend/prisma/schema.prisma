@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id        String    @id @default(uuid())
+  nombre    String
+  email     String    @unique
+  telefono  String
+  createdAt DateTime  @default(now())
+  reservas  Reserva[]
+
+  @@map("clientes")
+}
+
+model TipoSesion {
+  id          String    @id @default(uuid())
+  nombre      String    @unique
+  descripcion String?   @db.Text
+  duracion    Int
+  precio      Float?
+  activo      Boolean   @default(true)
+  reservas    Reserva[]
+
+  @@map("tipos_sesion")
+}
+
+model Reserva {
+  id             String                 @id @default(uuid())
+  clienteId      String
+  tipoSesionId   String
+  fechaHora      DateTime
+  estado         String                 @default("pendiente")
+  comentarios    String?                @db.Text
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  
+  cliente        Cliente                @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  tipoSesion     TipoSesion             @relation(fields: [tipoSesionId], references: [id])
+  disponibilidad DisponibilidadHoraria?
+
+  @@map("reservas")
+}
+
+model BloqueHorario {
+  id          String   @id @default(uuid())
+  diaSemana   Int
+  horaInicio  String
+  horaFin     String
+  activo      Boolean  @default(true)
+
+  @@map("bloques_horarios")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  nombre       String
+  rol          String   @default("admin")
+  createdAt    DateTime @default(now())
+
+  @@map("admin_users")
+}
+
+model DisponibilidadHoraria {
+  id          String   @id @default(uuid())
+  fecha       DateTime @db.Date
+  horaInicio  String
+  horaFin     String
+  disponible  Boolean  @default(true)
+  reservaId   String?  @unique
+  reserva     Reserva? @relation(fields: [reservaId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("disponibilidad_horaria")
+  @@unique([fecha, horaInicio])
+}
