@@ -446,7 +446,6 @@ app.patch("/api/disponibilidad/:id/toggle", async (req, res) => {
 // ==========================================
 // ALTRES
 // ==========================================
-
 app.get("/api/tipos-sesion", async (req, res) => {
   try {
     const tipos = await prisma.tipoSesion.findMany({
@@ -455,7 +454,8 @@ app.get("/api/tipos-sesion", async (req, res) => {
     });
     res.json(tipos);
   } catch (e) {
-    res.status(500).json({ error: "Error" });
+    console.error("Error tipos-sesion:", e);
+    res.status(500).json({ error: String(e) });
   }
 });
 
