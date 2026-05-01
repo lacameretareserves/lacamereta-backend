@@ -10,6 +10,19 @@ const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Helper: convertir "2026-05-01" a Date UTC segura
+function fechaSegura(fechaStr: string): Date {
+  return new Date(`${fechaStr}T12:00:00.000Z`);
+}
+
+// Helper: rang de cerca per una data
+function rangFecha(fechaStr: string) {
+  return {
+    gte: new Date(`${fechaStr}T00:00:00.000Z`),
+    lt:  new Date(`${fechaStr}T23:59:59.999Z`)
+  };
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -125,27 +138,27 @@ app.post("/api/reservas", async (req, res) => {
 
     const fechaReserva = new Date(fechaHora);
     
-    const year = fechaReserva.getFullYear();
-    const month = String(fechaReserva.getMonth() + 1).padStart(2, '0');
-    const day = String(fechaReserva.getDate()).padStart(2, '0');
+    const year = fechaReserva.getUTCFullYear();
+    const month = String(fechaReserva.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(fechaReserva.getUTCDate()).padStart(2, '0');
     const fechaSoloString = `${year}-${month}-${day}`;
     
-    const hours = String(fechaReserva.getHours()).padStart(2, '0');
-    const minutes = String(fechaReserva.getMinutes()).padStart(2, '0');
+    const hours = String(fechaReserva.getUTCHours()).padStart(2, '0');
+    const minutes = String(fechaReserva.getUTCMinutes()).padStart(2, '0');
     const horaInicio = `${hours}:${minutes}`;
 
     console.log(`🔍 Buscant disponibilitat per: fecha=${fechaSoloString}, hora=${horaInicio}`);
 
     const todasFranjas = await prisma.disponibilidadHoraria.findMany({
       where: {
-        fecha: {
-          gte: new Date(`${fechaSoloString}T00:00:00.000Z`),
-          lt: new Date(`${fechaSoloString}T23:59:59.999Z`)
-        }
+        fecha: rangFecha(fechaSoloString)
       }
     });
 
     console.log(`📊 Franges trobades per ${fechaSoloString}:`, todasFranjas.length);
+    todasFranjas.forEach(f => {
+      console.log(`  - ${f.horaInicio} disponible=${f.disponible}`);
+    });
 
     const franjaDisponible = todasFranjas.find(f => 
       f.horaInicio === horaInicio && 
@@ -154,6 +167,7 @@ app.post("/api/reservas", async (req, res) => {
     );
 
     if (!franjaDisponible) {
+      console.log(`❌ No s'ha trobat franja disponible per ${horaInicio}`);
       return res.status(400).json({ 
         message: 'Aquesta hora ja no està disponible. Si us plau, refresca la pàgina i selecciona una altra hora.' 
       });
@@ -265,20 +279,17 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
 
     if (estado === 'confirmada' && reserva.estado !== 'confirmada') {
       const fechaReserva = new Date(reserva.fechaHora);
-      const year = fechaReserva.getFullYear();
-      const month = String(fechaReserva.getMonth() + 1).padStart(2, '0');
-      const day = String(fechaReserva.getDate()).padStart(2, '0');
+      const year = fechaReserva.getUTCFullYear();
+      const month = String(fechaReserva.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(fechaReserva.getUTCDate()).padStart(2, '0');
       const fechaSoloString = `${year}-${month}-${day}`;
-      const hours = String(fechaReserva.getHours()).padStart(2, '0');
-      const minutes = String(fechaReserva.getMinutes()).padStart(2, '0');
+      const hours = String(fechaReserva.getUTCHours()).padStart(2, '0');
+      const minutes = String(fechaReserva.getUTCMinutes()).padStart(2, '0');
       const horaInicio = `${hours}:${minutes}`;
       
       const todasFranjas = await prisma.disponibilidadHoraria.findMany({
         where: {
-          fecha: {
-            gte: new Date(`${fechaSoloString}T00:00:00.000Z`),
-            lt: new Date(`${fechaSoloString}T23:59:59.999Z`)
-          }
+          fecha: rangFecha(fechaSoloString)
         }
       });
 
@@ -288,13 +299,13 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
         const duracionMinutos = reserva.tipoSesion.duracion;
         const horaFinDate = new Date(reserva.fechaHora);
         horaFinDate.setMinutes(horaFinDate.getMinutes() + duracionMinutos);
-        const horaFinH = String(horaFinDate.getHours()).padStart(2, '0');
-        const horaFinM = String(horaFinDate.getMinutes()).padStart(2, '0');
+        const horaFinH = String(horaFinDate.getUTCHours()).padStart(2, '0');
+        const horaFinM = String(horaFinDate.getUTCMinutes()).padStart(2, '0');
         const horaFin = `${horaFinH}:${horaFinM}`;
 
         disponibilidad = await prisma.disponibilidadHoraria.create({
           data: {
-            fecha: new Date(`${fechaSoloString}T00:00:00.000Z`),
+            fecha: fechaSegura(fechaSoloString),
             horaInicio,
             horaFin,
             disponible: false,
@@ -349,7 +360,7 @@ app.get("/api/disponibilidad/:fecha", async (req, res) => {
     const { fecha } = req.params;
     const disponibilidad = await prisma.disponibilidadHoraria.findMany({
       where: {
-        fecha: new Date(fecha)
+        fecha: rangFecha(fecha)
       },
       include: {
         reserva: {
@@ -380,7 +391,7 @@ app.post("/api/disponibilidad", async (req, res) => {
       horarios.map(h => 
         prisma.disponibilidadHoraria.create({
           data: {
-            fecha: new Date(fecha),
+            fecha: fechaSegura(fecha),
             horaInicio: h.horaInicio,
             horaFin: h.horaFin,
             disponible: true
@@ -461,6 +472,10 @@ app.get("/api/tipos-sesion", async (req, res) => {
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
+});
+
+app.get("/", (req, res) => {
+  res.json({ message: "La Camereta API funcionant ✅" });
 });
 
 app.listen(PORT, () => {
