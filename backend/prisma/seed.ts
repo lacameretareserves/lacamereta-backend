@@ -26,11 +26,11 @@ async function main() {
   }
 
   // Crear usuario admin
-  const adminEmail = 'admin@lacamereta.com';
+  const adminEmail = 'lacamereta@gmail.com';
   const existingAdmin = await prisma.adminUser.findUnique({ where: { email: adminEmail } });
 
   if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash('admin123', 10);
+    const passwordHash = await bcrypt.hash('Samba@123', 10);
     await prisma.adminUser.create({
       data: {
         email: adminEmail,
@@ -41,12 +41,11 @@ async function main() {
     });
     console.log(`✅ Usuario admin creado:`);
     console.log(`   Email: ${adminEmail}`);
-    console.log(`   Password: admin123`);
   } else {
-    console.log(`⏭️  Usuario admin ya existe: ${adminEmail}`);
+    console.log(`⏭️  Usuario admin ja existeix: ${adminEmail}`);
   }
 
-  console.log('🎉 Seed completado!');
+  console.log('🎉 Seed completat!');
 }
 
 main()

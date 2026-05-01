@@ -19,7 +19,6 @@ export default function LoginPage() {
       localStorage.setItem('token', response.token);
       localStorage.setItem('admin', JSON.stringify(response.admin));
       
-      // Redirigir automàticament a admin
       window.location.href = '/admin';
       
     } catch (err) {
@@ -34,13 +33,11 @@ export default function LoginPage() {
     <div className="login-container">
       <div className="login-wrapper">
         <div className="login-card">
-          {/* Header */}
           <div className="login-header">
             <h1 className="login-title">La Camereta</h1>
             <p className="login-subtitle">Panell d'Administració</p>
           </div>
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit} className="login-form">
             {error && (
               <div className="alert alert-error">
@@ -88,13 +85,6 @@ export default function LoginPage() {
               {loading ? 'Iniciant sessió...' : 'Iniciar Sessió'}
             </button>
           </form>
-
-          {/* Credenciales de prueba */}
-          <div className="login-help">
-            <p className="help-text">Credencials de prova:</p>
-            <p className="help-text"><strong>Email:</strong> admin@lacamereta.com</p>
-            <p className="help-text"><strong>Contrasenya:</strong> admin123</p>
-          </div>
         </div>
       </div>
     </div>
