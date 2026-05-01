@@ -196,17 +196,20 @@ app.post("/api/reservas", async (req, res) => {
     console.log(`✅ Reserva creada i franja ${horaInicio} bloquejada automàticament`);
 
     try {
-      await enviarEmailNotificacionEstudio(
-        nombre,
-        email,
-        telefono,
-        tipoSesion.nombre,
-        fechaReserva,
-        comentarios
-      );
-    } catch (emailError) {
-      console.error('⚠️ Error enviant notificació a l\'estudi:', emailError);
-    }
+  await Promise.race([
+    enviarEmailNotificacionEstudio(
+      nombre,
+      email,
+      telefono,
+      tipoSesion.nombre,
+      fechaReserva,
+      comentarios
+    ),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Email timeout')), 3000))
+  ]);
+} catch (emailError) {
+  console.error('⚠️ Error enviant notificació a l\'estudi:', emailError);
+}
 
     res.status(201).json({
       message: 'Reserva creada exitosament',
