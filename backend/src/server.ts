@@ -470,6 +470,26 @@ app.get("/api/tipos-sesion", async (req, res) => {
   }
 });
 
+// ==========================================
+// DEBUG (eliminar després de solucionar)
+// ==========================================
+app.get("/api/debug/disponibilidad", async (req, res) => {
+  try {
+    const totes = await prisma.disponibilidadHoraria.findMany({
+      orderBy: { fecha: 'asc' }
+    });
+    res.json(totes.map(f => ({
+      id: f.id,
+      fecha_raw: f.fecha,
+      fecha_iso: f.fecha.toISOString(),
+      horaInicio: f.horaInicio,
+      disponible: f.disponible
+    })));
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
