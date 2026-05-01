@@ -490,6 +490,17 @@ app.get("/api/debug/disponibilidad", async (req, res) => {
   }
 });
 
+app.delete("/api/debug/limpiar-disponibilidad", async (req, res) => {
+  try {
+    const result = await prisma.disponibilidadHoraria.deleteMany({
+      where: { reservaId: null }
+    });
+    res.json({ message: `${result.count} franges esborrades` });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });

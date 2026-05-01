@@ -57,7 +57,8 @@ export default function BookingPage() {
     setErrorMessage('');
 
     try {
-      const fechaHoraCompleta = `${data.fechaHora}T${data.hora}:00`;
+      // Afegim .000Z per forçar UTC i evitar desplaçament de timezone
+      const fechaHoraCompleta = `${data.fechaHora}T${data.hora}:00.000Z`;
       const dataToSend = {
         nombre: data.nombre,
         email: data.email,
@@ -79,9 +80,7 @@ export default function BookingPage() {
     }
   };
 
-  // Funció per renderitzar el selector d'hora
   const renderHoraSelector = () => {
-    // Si s'ha enviat amb èxit, mostrar missatge neutre
     if (successMessage) {
       return (
         <p className="form-info">
@@ -90,7 +89,6 @@ export default function BookingPage() {
       );
     }
 
-    // Si està carregant
     if (cargandoHoras) {
       return (
         <p className="form-info">
@@ -99,7 +97,6 @@ export default function BookingPage() {
       );
     }
 
-    // Si no hi ha data seleccionada
     if (!fechaSeleccionada) {
       return (
         <p className="form-info">
@@ -108,7 +105,6 @@ export default function BookingPage() {
       );
     }
 
-    // Si hi ha data però no hi ha hores disponibles
     if (horasDisponibles.length === 0) {
       return (
         <p className="form-warning">
@@ -117,7 +113,6 @@ export default function BookingPage() {
       );
     }
 
-    // Si hi ha hores disponibles, mostrar el selector
     return (
       <select
         {...register('hora', { required: "L'hora és obligatòria" })}
@@ -136,7 +131,6 @@ export default function BookingPage() {
   return (
     <div className="booking-container">
       <div className="booking-wrapper">
-        {/* Header */}
         <div className="booking-header">
           <h1 className="booking-title">
             Reserva la teva Sessió Fotogràfica
