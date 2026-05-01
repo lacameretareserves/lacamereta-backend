@@ -70,7 +70,7 @@ model AdminUser {
 
 model DisponibilidadHoraria {
   id          String   @id @default(uuid())
-  fecha       DateTime @db.Date
+  fecha       String
   horaInicio  String
   horaFin     String
   disponible  Boolean  @default(true)
