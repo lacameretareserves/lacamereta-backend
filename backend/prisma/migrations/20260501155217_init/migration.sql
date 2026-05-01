@@ -61,7 +61,7 @@ CREATE TABLE "admin_users" (
 -- CreateTable
 CREATE TABLE "disponibilidad_horaria" (
     "id" TEXT NOT NULL,
-    "fecha" DATE NOT NULL,
+    "fecha" TEXT NOT NULL,
     "horaInicio" TEXT NOT NULL,
     "horaFin" TEXT NOT NULL,
     "disponible" BOOLEAN NOT NULL DEFAULT true,
