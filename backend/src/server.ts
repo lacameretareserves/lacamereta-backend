@@ -10,17 +10,9 @@ const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Helper: convertir "2026-05-01" a Date UTC segura
-function fechaSegura(fechaStr: string): Date {
-  return new Date(`${fechaStr}T12:00:00.000Z`);
-}
-
-// Helper: rang de cerca per una data
-function rangFecha(fechaStr: string) {
-  return {
-    gte: new Date(`${fechaStr}T00:00:00.000Z`),
-    lt:  new Date(`${fechaStr}T23:59:59.999Z`)
-  };
+// Helper: data exacta per PostgreSQL @db.Date
+function fechaDate(fechaStr: string): Date {
+  return new Date(`${fechaStr}T00:00:00.000Z`);
 }
 
 app.use(cors());
@@ -151,7 +143,7 @@ app.post("/api/reservas", async (req, res) => {
 
     const todasFranjas = await prisma.disponibilidadHoraria.findMany({
       where: {
-        fecha: rangFecha(fechaSoloString)
+        fecha: fechaDate(fechaSoloString)
       }
     });
 
@@ -289,7 +281,7 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
       
       const todasFranjas = await prisma.disponibilidadHoraria.findMany({
         where: {
-          fecha: rangFecha(fechaSoloString)
+          fecha: fechaDate(fechaSoloString)
         }
       });
 
@@ -305,7 +297,7 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
 
         disponibilidad = await prisma.disponibilidadHoraria.create({
           data: {
-            fecha: fechaSegura(fechaSoloString),
+            fecha: fechaDate(fechaSoloString),
             horaInicio,
             horaFin,
             disponible: false,
@@ -360,7 +352,7 @@ app.get("/api/disponibilidad/:fecha", async (req, res) => {
     const { fecha } = req.params;
     const disponibilidad = await prisma.disponibilidadHoraria.findMany({
       where: {
-        fecha: rangFecha(fecha)
+        fecha: fechaDate(fecha)
       },
       include: {
         reserva: {
@@ -392,7 +384,7 @@ app.post("/api/disponibilidad", async (req, res) => {
         prisma.disponibilidadHoraria.upsert({
           where: {
             fecha_horaInicio: {
-              fecha: fechaSegura(fecha),
+              fecha: fechaDate(fecha),
               horaInicio: h.horaInicio
             }
           },
@@ -401,7 +393,7 @@ app.post("/api/disponibilidad", async (req, res) => {
             disponible: true
           },
           create: {
-            fecha: fechaSegura(fecha),
+            fecha: fechaDate(fecha),
             horaInicio: h.horaInicio,
             horaFin: h.horaFin,
             disponible: true
@@ -526,4 +518,3 @@ app.listen(PORT, () => {
 });
 
 setInterval(() => {}, 100000);
-
