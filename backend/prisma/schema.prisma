@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -67,7 +67,6 @@ model AdminUser {
 
   @@map("admin_users")
 }
-
 model DisponibilidadHoraria {
   id          String   @id @default(uuid())
   fecha       String
