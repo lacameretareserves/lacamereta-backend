@@ -389,8 +389,18 @@ app.post("/api/disponibilidad", async (req, res) => {
 
     const created = await Promise.all(
       horarios.map(h => 
-        prisma.disponibilidadHoraria.create({
-          data: {
+        prisma.disponibilidadHoraria.upsert({
+          where: {
+            fecha_horaInicio: {
+              fecha: fechaSegura(fecha),
+              horaInicio: h.horaInicio
+            }
+          },
+          update: {
+            horaFin: h.horaFin,
+            disponible: true
+          },
+          create: {
             fecha: fechaSegura(fecha),
             horaInicio: h.horaInicio,
             horaFin: h.horaFin,
