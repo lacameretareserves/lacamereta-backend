@@ -10,9 +10,12 @@ const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Helper: data exacta per PostgreSQL @db.Date
-function fechaDate(fechaStr: string): Date {
-  return new Date(`${fechaStr}T00:00:00.000Z`);
+// Helper: extreure string de data "YYYY-MM-DD" d'un Date UTC
+function fechaString(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 app.use(cors());
@@ -129,12 +132,7 @@ app.post("/api/reservas", async (req, res) => {
     }
 
     const fechaReserva = new Date(fechaHora);
-    
-    const year = fechaReserva.getUTCFullYear();
-    const month = String(fechaReserva.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(fechaReserva.getUTCDate()).padStart(2, '0');
-    const fechaSoloString = `${year}-${month}-${day}`;
-    
+    const fechaSoloString = fechaString(fechaReserva);
     const hours = String(fechaReserva.getUTCHours()).padStart(2, '0');
     const minutes = String(fechaReserva.getUTCMinutes()).padStart(2, '0');
     const horaInicio = `${hours}:${minutes}`;
@@ -142,9 +140,7 @@ app.post("/api/reservas", async (req, res) => {
     console.log(`🔍 Buscant disponibilitat per: fecha=${fechaSoloString}, hora=${horaInicio}`);
 
     const todasFranjas = await prisma.disponibilidadHoraria.findMany({
-      where: {
-        fecha: fechaDate(fechaSoloString)
-      }
+      where: { fecha: fechaSoloString }
     });
 
     console.log(`📊 Franges trobades per ${fechaSoloString}:`, todasFranjas.length);
@@ -271,18 +267,13 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
 
     if (estado === 'confirmada' && reserva.estado !== 'confirmada') {
       const fechaReserva = new Date(reserva.fechaHora);
-      const year = fechaReserva.getUTCFullYear();
-      const month = String(fechaReserva.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(fechaReserva.getUTCDate()).padStart(2, '0');
-      const fechaSoloString = `${year}-${month}-${day}`;
+      const fechaSoloString = fechaString(fechaReserva);
       const hours = String(fechaReserva.getUTCHours()).padStart(2, '0');
       const minutes = String(fechaReserva.getUTCMinutes()).padStart(2, '0');
       const horaInicio = `${hours}:${minutes}`;
       
       const todasFranjas = await prisma.disponibilidadHoraria.findMany({
-        where: {
-          fecha: fechaDate(fechaSoloString)
-        }
+        where: { fecha: fechaSoloString }
       });
 
       let disponibilidad = todasFranjas.find(f => f.horaInicio === horaInicio);
@@ -297,7 +288,7 @@ app.patch("/api/reservas/:id/estado", async (req, res) => {
 
         disponibilidad = await prisma.disponibilidadHoraria.create({
           data: {
-            fecha: fechaDate(fechaSoloString),
+            fecha: fechaSoloString,
             horaInicio,
             horaFin,
             disponible: false,
@@ -351,9 +342,7 @@ app.get("/api/disponibilidad/:fecha", async (req, res) => {
   try {
     const { fecha } = req.params;
     const disponibilidad = await prisma.disponibilidadHoraria.findMany({
-      where: {
-        fecha: fechaDate(fecha)
-      },
+      where: { fecha },
       include: {
         reserva: {
           include: {
@@ -384,7 +373,7 @@ app.post("/api/disponibilidad", async (req, res) => {
         prisma.disponibilidadHoraria.upsert({
           where: {
             fecha_horaInicio: {
-              fecha: fechaDate(fecha),
+              fecha,
               horaInicio: h.horaInicio
             }
           },
@@ -393,7 +382,7 @@ app.post("/api/disponibilidad", async (req, res) => {
             disponible: true
           },
           create: {
-            fecha: fechaDate(fecha),
+            fecha,
             horaInicio: h.horaInicio,
             horaFin: h.horaFin,
             disponible: true
@@ -482,8 +471,7 @@ app.get("/api/debug/disponibilidad", async (req, res) => {
     });
     res.json(totes.map(f => ({
       id: f.id,
-      fecha_raw: f.fecha,
-      fecha_iso: f.fecha.toISOString(),
+      fecha: f.fecha,
       horaInicio: f.horaInicio,
       disponible: f.disponible
     })));
